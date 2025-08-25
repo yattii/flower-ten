@@ -1,26 +1,63 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* 自作ユーティリティは @layer components に入れる */
+@layer components {
+  /* ガラス風・カード（明るい白基調） */
+  .glass { @apply bg-white/80 backdrop-blur-md; }
+  .card  { @apply rounded-3xl bg-white/95 backdrop-blur ring-1 ring-black/5 shadow-md p-6; }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  /* セクション見出し／説明（濃いめの可読色） */
+  .section-title { @apply relative text-2xl md:text-3xl font-semibold tracking-tight text-gray-900; }
+  .section-sub   { @apply text-sm text-gray-700 mt-6; }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  /* ナビ・ボタン */
+  .navlink { @apply hover:opacity-80 px-2 py-1 rounded-lg; }
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-xl px-4 py-3 font-medium text-white shadow-sm;
+    background-image: linear-gradient(135deg, #fb7185, #f472b6, #60a5fa);
+  }
+  .btn-secondary { @apply inline-flex items-center justify-center rounded-xl px-4 py-3 font-medium border bg-white text-gray-900; }
+  .btn-ghost     { @apply inline-flex items-center justify-center rounded-xl px-3 py-3 font-medium border bg-white text-gray-900; }
+
+  /* チップ（濃いテキスト） */
+  .chip        { @apply inline-flex items-center rounded-full border px-3 py-1 text-sm bg-white hover:bg-white/90 shadow-sm transition; }
+  .chip-active { @apply text-white; }
+  .chip-active { background-image: linear-gradient(135deg, #f472b6, #60a5fa); border-color: transparent; }
+
+  /* 入力UI：はっきり濃い文字＋太め境界＋強いフォーカス */
+  .field { @apply grid gap-1; }
+  .field > span { @apply text-sm text-gray-700 font-medium; }
+
+  .input-lg {
+    @apply rounded-xl border border-gray-300 bg-white px-4 py-3 text-[16px] text-gray-900
+           placeholder:text-gray-400 shadow-inner;
+  }
+  .input-lg:focus { @apply outline-none ring-2 ring-pink-300/70 border-transparent; }
+
+  /* 必須マーク */
+  .req { color: #e11d48; font-style: normal; }
+
+  /* 横スライダーのカード幅：SPで3枚、smで2枚、lgで3枚 */
+  .card-w {
+    flex: 0 0 calc((100% - 2 * var(--gap, 1rem)) / 3);
+  }
+  @media (min-width: 640px) {
+    .card-w { flex-basis: calc(50% - var(--gap, 1rem)); }
+  }
+  @media (min-width: 1024px) {
+    .card-w { flex-basis: calc((100% - 2 * var(--gap, 1rem)) / 3); }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* 擬要素は普通のCSSでOK（@apply不要） */
+.section-title::after {
+  content: ""; position: absolute; left: 0; bottom: -10px; width: 88px; height: 4px;
+  border-radius: 9999px; background: linear-gradient(90deg, #f472b6, #38bdf8); opacity: .75;
 }
+
+/* アニメ・スクロールバー等（@apply不要なので @layer 外でOK） */
+@keyframes pulse-slow { 0%,100%{ transform:scale(1); opacity:.6 } 50%{ transform:scale(1.05); opacity:.9 } }
+.animate-pulse-slow { animation: pulse-slow 6s infinite; }
+
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
