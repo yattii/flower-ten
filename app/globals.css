@@ -1,13 +1,27 @@
 @import "tailwindcss";
 
-/* 自作ユーティリティは @layer components に入れる */
+/* =========================
+   お花屋さん用 フォント設定
+   ========================= */
+@theme {
+  --font-sans: var(--font-sans-jp), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, "Noto Sans JP", Arial, sans-serif;
+
+  --font-serif: var(--font-serif-jp), "Noto Serif JP", Georgia, "Times New Roman", serif;
+
+  --font-script: var(--font-script), cursive;
+}
+
+/* =========================
+   自作ユーティリティ
+   ========================= */
 @layer components {
   /* ガラス風・カード（明るい白基調） */
   .glass { @apply bg-white/80 backdrop-blur-md; }
   .card  { @apply rounded-3xl bg-white/95 backdrop-blur ring-1 ring-black/5 shadow-md p-6; }
 
   /* セクション見出し／説明（濃いめの可読色） */
-  .section-title { @apply relative text-2xl md:text-3xl font-semibold tracking-tight text-gray-900; }
+  .section-title { @apply relative font-serif text-2xl md:text-3xl font-semibold tracking-tight text-gray-900; }
   .section-sub   { @apply text-sm text-gray-700 mt-6; }
 
   /* ナビ・ボタン */
@@ -49,15 +63,25 @@
   }
 }
 
-/* 擬要素は普通のCSSでOK（@apply不要） */
-.section-title::after {
-  content: ""; position: absolute; left: 0; bottom: -10px; width: 88px; height: 4px;
-  border-radius: 9999px; background: linear-gradient(90deg, #f472b6, #38bdf8); opacity: .75;
-}
 
-/* アニメ・スクロールバー等（@apply不要なので @layer 外でOK） */
-@keyframes pulse-slow { 0%,100%{ transform:scale(1); opacity:.6 } 50%{ transform:scale(1.05); opacity:.9 } }
+
+/* アニメーション・スクロールバー */
+@keyframes pulse-slow {
+  0%,100%{ transform:scale(1); opacity:.6 }
+  50%{ transform:scale(1.05); opacity:.9 }
+}
 .animate-pulse-slow { animation: pulse-slow 6s infinite; }
 
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 .no-scrollbar::-webkit-scrollbar { display: none; }
+
+/* =========================
+   全体ベーススタイル
+   ========================= */
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-sans); /* 本文は可読性重視 */
+  background-color: #fffafc;     /* やさしい花屋トーン */
+  color: #333;
+}

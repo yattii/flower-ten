@@ -128,44 +128,135 @@ export default function Home({
       {/* 背景 */}
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(60%_90%_at_20%_20%,#fff0f6_0%,transparent_60%),radial-gradient(70%_100%_at_80%_20%,#e6f7ff_0%,transparent_60%),linear-gradient(180deg,#ffffff,#fffaf5)]" />
 
-      {/* ヘッダー */}
-      <header className="sticky top-0 z-50 glass border-b">
-        <div className="mx-auto max-w-6xl px-4 h-16 flex items-center justify-between">
-          <a href="#top" className="font-semibold tracking-wide text-lg text-gray-900">
-            <span className="inline-flex items-center gap-2">
-              <span className="size-6 rounded-full bg-gradient-to-br from-pink-400 to-sky-400 shadow-inner" />
-              HANA
-            </span>
-          </a>
-          <nav className="flex items-center gap-3 text-sm">
-            <a href="#catalog" className="navlink text-gray-900">ラインナップ</a>
-            <a href="#qa" className="navlink text-gray-900">Q&A</a>
-            <a href="#order" className="navlink text-gray-900">申し込み</a>
-            <a href="tel:0120-000-000" className="btn-ghost">📞 0120-000-000</a>
-          </nav>
-        </div>
-      </header>
+      {/* ====== Header: PC=バー / SP=フローティング＋スライドイン ====== */}
+<header className="fixed inset-x-0 top-0 z-50">
+  {/* 1) 開閉トグル（peer）— 以降の兄弟に peer-checked が効く */}
+  <input id="nav-toggle-main" type="checkbox" className="peer sr-only" />
 
-      {/* ヒーロー */}
-      <section className="relative mx-auto max-w-6xl px-4 pt-8">
-        <div className="relative overflow-hidden rounded-3xl shadow-xl ring-1 ring-black/5">
-          <HeroSlider images={heroImages} intervalMs={3500} />
-          <div className="absolute bottom-4 left-4 right-4 md:left-8 md:right-auto md:max-w-xl">
-            <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-5 md:p-6 shadow-lg ring-1 ring-black/5">
-              <h1 className="text-[22px] md:text-4xl font-semibold tracking-tight text-gray-900">
-                想いを花にのせて
-              </h1>
-              <p className="mt-2 text-sm md:text-base text-gray-700 leading-relaxed">
-                ブーケ・アレンジメント・スタンド花｜即日手配もご相談ください
-              </p>
-              <div className="mt-4 flex gap-3">
-                <a href="#catalog" className="btn-primary">カタログを見る</a>
-                <a href="#order" className="btn-secondary">見積り・ご相談</a>
-              </div>
-            </div>
-          </div>
+  {/* === PC: バー（md以上） === */}
+  <div className="hidden md:block bg-white/85 backdrop-blur border-b border-black/5">
+    <div className="mx-auto max-w-6xl px-4">
+      <div className="h-16 flex items-center justify-between">
+        <a href="#top" className="font-semibold tracking-wide text-lg text-gray-900">
+          <span className="inline-flex items-center gap-2">
+            <span className="size-6 rounded-full bg-gradient-to-br from-pink-400 to-sky-400 shadow-inner" />
+            <span className="font-[var(--font-script)] text-2xl leading-none">HANA</span>
+          </span>
+        </a>
+        <nav className="flex items-center gap-7 text-sm font-semibold text-gray-700">
+          <a href="#catalog" className="hover:underline underline-offset-4">ラインナップ</a>
+          <a href="#qa" className="hover:underline underline-offset-4">Q&A</a>
+          <a href="#order"   className="hover:underline underline-offset-4">申し込み</a>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+  {/* === SP: ハンバーガー（md未満） === */}
+
+  {/* 右上の丸ボタン（☰/✕を同じ場所で切り替え） */}
+  <label
+    htmlFor="nav-toggle-main"
+    aria-label="メニューを開閉"
+    className="
+      md:hidden fixed right-4 top-4 h-12 w-12 rounded-full backdrop-blur border shadow-lg
+      flex items-center justify-center text-2xl cursor-pointer select-none z-[60]
+      peer-checked:[&>span[data-icon='burger']]:hidden
+      peer-checked:[&>span[data-icon='close']]:inline
+    "
+  >
+    <span data-icon="burger">☰</span>
+    <span data-icon="close" className="hidden">✕</span>
+  </label>
+
+  {/* オーバーレイ（背景タップで閉じる） */}
+  <label
+    htmlFor="nav-toggle-main"
+    aria-hidden="true"
+    className="
+      md:hidden fixed inset-0 z-40 bg-black/40 opacity-0 pointer-events-none
+      transition-opacity duration-300 ease-out
+      peer-checked:opacity-100 peer-checked:pointer-events-auto
+    "
+  />
+
+  {/* SPメニュー：全画面スライドイン（上から） */}
+  <aside
+    role="dialog" aria-modal="true"
+    className="
+      md:hidden fixed inset-0 z-50 bg-white/70 backdrop-blur
+      -translate-y-full opacity-0
+      transition-[opacity,transform] duration-300 ease-out will-change-transform
+      peer-checked:translate-y-0 peer-checked:opacity-100
+      overflow-y-auto
+    "
+  >
+    <div className="pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] min-h-dvh flex">
+      <nav className="mx-auto w-full max-w-[680px] flex flex-col items-center justify-center gap-2 py-10 text-base font-medium">
+        <a href="#top"     className="px-6 py-3 w-full text-center" data-close-on-click>
+          <span className="font-[var(--font-script)] text-2xl leading-none text-gray-900">HANA</span>
+        </a>
+        <a href="#catalog" className="px-6 py-3 w-full text-center" data-close-on-click>ラインナップ</a>
+        <a href="#qa" className="px-6 py-3 w-full text-center" data-close-on-click>Q&A</a>
+        <a href="#order"   className="px-6 py-3 w-full text-center" data-close-on-click>申し込み</a>
+        <a href="tel:0120-000-000" className="btn-primary mt-2 w-[min(280px,90%)]" data-close-on-click>📞 0120-000-000</a>
+      </nav>
+    </div>
+  </aside>
+
+  {/* クリックで閉じる & スクロールロック（最小JS） */}
+  <script
+    dangerouslySetInnerHTML={{
+      __html: `
+(function(){
+  var cb = document.getElementById('nav-toggle-main');
+  var links = document.querySelectorAll('[data-close-on-click]');
+  function lockScroll(locked){ document.documentElement.style.overflow = locked ? 'hidden' : ''; }
+  function sync(){ if(!cb) return; lockScroll(cb.checked); }
+  if(cb){ cb.addEventListener('change', sync); sync(); }
+  links.forEach(function(el){ el.addEventListener('click', function(){ if(cb){ cb.checked = false; sync(); } }); });
+})();`
+    }}
+  />
+</header>
+
+
+      {/* ====== Hero Section ====== */}
+<section className="
+  relative mx-auto max-w-6xl px-0 md:px-4
+  h-screen md:h-auto pt-0 md:pt-8
+">
+  <div className="
+    relative overflow-hidden shadow-xl ring-1 ring-black/5
+    h-full md:h-auto
+  ">
+    <HeroSlider images={heroImages} intervalMs={3500} />
+
+    {/* テキストボックス（SP=下部重ね / PC=通常レイアウト） */}
+    <div className="
+      absolute bottom-0 md:bottom-4 left-0 right-0 md:left-8 md:right-auto md:max-w-xl
+      md:translate-y-0
+      p-4 md:p-0
+    ">
+      <div className="
+        bg-white/90 backdrop-blur-sm rounded-t-2xl md:rounded-2xl
+        p-5 md:p-6 shadow-lg ring-1 ring-black/5
+      ">
+        <h1 className="font-serif text-[22px] md:text-4xl font-semibold tracking-tight text-gray-900">
+          想いを花にのせて
+        </h1>
+        <p className="mt-2 text-sm md:text-base text-gray-700 leading-relaxed">
+          ブーケ・アレンジメント・スタンド花｜即日手配もご相談ください
+        </p>
+        <div className="mt-4 flex gap-3">
+          <a href="#catalog" className="btn-primary">カタログを見る</a>
+          <a href="#order" className="btn-secondary">見積り・ご相談</a>
         </div>
-      </section>
+      </div>
+    </div>
+  </div>
+</section>
+
 
       {/* カタログ */}
       <section id="catalog" className="mx-auto max-w-6xl px-4 py-14">
@@ -291,6 +382,7 @@ function OrderForm({ form, setForm, done, setDone, sending, setSending, error, s
     </section>
   );
 }
+
 // git status                    
 // git add .                       
 // git commit -m "Fix something"  
