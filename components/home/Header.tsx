@@ -33,7 +33,7 @@ export function Header() {
                 }`}
                 aria-hidden={showLogo ? undefined : true}
               >
-                <Image src="/images/hana-logo.svg" alt="HANA" width={50} height={10} priority />
+                <Image src="/images/hana-logo.png" alt="HANA" width={50} height={10} priority />
               </a>
             </div>
 
@@ -65,7 +65,7 @@ export function Header() {
   >
     <div className="bg-[#f5f5dc] rounded-4xl px-2 py-1 shadow-sm">
       <Image
-        src="/images/hana-logo.svg"
+        src="/images/hana-logo.png"
         alt="HANA"
         width={70}
         height={30}
@@ -128,7 +128,7 @@ export function Header() {
         aria-label="トップへ"
       >
         <Image
-          src="/images/hana-logo.svg"
+          src="/images/hana-logo.png"
           alt="HANA"
           width={140}   // ← メニュー内は少し大きめ（お好みで調整OK）
           height={60}
