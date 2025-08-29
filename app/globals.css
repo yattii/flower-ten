@@ -85,3 +85,98 @@ html, body {
   background-color: #fffafc;     /* やさしい花屋トーン */
   color: #333;
 }
+
+
+/* ===== Intro screen（2秒）→ ロゴ移動（1秒） ===== */
+
+/* 2秒の“待機＆フェードイン”用（中央で見せるだけ） */
+@keyframes logo-intro-hold {
+  0%   { opacity: 0; transform: translate(0,0) scale(0.92); }
+  25%  { opacity: 1; transform: translate(0,0) scale(1); }
+  100% { opacity: 1; transform: translate(0,0) scale(1); }
+}
+
+/* 1秒で中央→左上へ縮小しながら移動 */
+@keyframes logo-intro-fly {
+  0%   { opacity: 1; transform: translate(0,0) scale(1); }
+  100% { opacity: 1; transform: translate(calc(-50vw + 72px), calc(-50vh + 72px)) scale(0.60); }
+}
+
+/* 背景はロゴが動く1秒間でフェードアウト（=2s待ってから1sで消える） */
+@keyframes intro-bg-fade {
+  0%   { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro-logo-anim { animation: none !important; }
+  .intro-bg-fade   { animation: none !important; opacity: 0 !important; }
+}
+
+/* イントロ最前面 */
+.intro-overlay {
+  position: fixed; inset: 0; z-index: 70;
+  pointer-events: none;
+}
+
+/* 背景（お好みで変更OK） */
+.intro-bg {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(80% 60% at 50% 40%, #fff1f7 0%, transparent 60%),
+    radial-gradient(70% 60% at 30% 70%, #e7f3ff 0%, transparent 60%),
+    linear-gradient(180deg, #ffffff 0%, #fffaf5 100%);
+}
+/* 2s待ってから1sでフェードアウト */
+.intro-bg-fade {
+  animation: intro-bg-fade 1s ease-out forwards;
+  animation-delay: 2s;
+}
+
+/* ロゴ（2s中央に滞在→1sで左上へ移動） */
+.intro-logo { position: absolute; inset: 0; display: grid; place-items: center; }
+.intro-logo-anim {
+  pointer-events: none;
+  will-change: transform, opacity;
+  filter: drop-shadow(0 8px 24px rgba(0,0,0,.12));
+
+  /* 複数アニメを連結：最初に2s保持、続いて1sで飛ぶ */
+  animation:
+    logo-intro-hold 2s ease-out forwards,
+    logo-intro-fly  1s ease-in-out forwards 2s; /* ← 2秒遅延して開始 */
+}
+
+/* ロゴが左上に残るトップボタン（#top） */
+.intro-topbtn {
+  position: fixed; z-index: 60; top: 72px; left: 72px;
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 44px; min-width: 44px; padding: 0 14px; border-radius: 9999px;
+  background: rgba(255,255,255,.92);
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  border: 1px solid rgba(0,0,0,.06);
+  box-shadow: 0 6px 18px rgba(0,0,0,.10);
+  color: #111; text-decoration: none;
+  transition: transform .18s ease, box-shadow .18s ease, background .18s ease, opacity .18s ease;
+}
+.intro-topbtn:hover  { transform: translateY(-1px); box-shadow: 0 10px 24px rgba(0,0,0,.12); }
+.intro-topbtn:active { transform: translateY(0); }
+.intro-topbtn .dot {
+  width: 18px; height: 18px; border-radius: 9999px;
+  background: linear-gradient(135deg, #fb7185, #60a5fa);
+  box-shadow: inset 0 2px 6px rgba(255,255,255,.5);
+  margin-right: 10px;
+}
+
+@media (max-width: 767px) {
+  .intro-topbtn { top: 56px; left: 16px; height: 40px; padding: 0 12px; }
+  .intro-topbtn .dot { width: 16px; height: 16px; margin-right: 8px; }
+}
+/* ===== IntroDock アニメ用 ===== */
+@keyframes logo-intro-hold {
+  0%   { opacity: 0; transform: translate(-50%,-50%) scale(0.92); }
+  25%  { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+  100% { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+}
+@keyframes introBgFade {
+  to { opacity: 0; }
+}
