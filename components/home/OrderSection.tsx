@@ -156,7 +156,7 @@ export function OrderSection({
       <div className="mx-auto max-w-3xl px-4">
         <h2 className="section-title text-gray-900 pt-11">お申し込み</h2>
 
-        <div className="card mt-6 grid gap-8 overflow-hidden">
+        <div className="card mt-6 grid gap-8 w-full overflow-x-hidden">
   <form onSubmit={submit} className="grid gap-8 w-full" noValidate>
     {/* ===== お申込者情報 ===== */}
     <fieldset className="grid gap-4 w-full">
@@ -170,7 +170,7 @@ export function OrderSection({
           placeholder="山田 太郎"
           error={errors.applicantName}
           required
-          className="max-w-full"
+          className="w-full"
         />
         <LabeledInput
           label="お電話番号*"
@@ -182,10 +182,10 @@ export function OrderSection({
           inputMode="numeric"
           maxLength={11}
           required
-          className="max-w-full"
+          className="w-full"
         />
         <LabeledInput
-          className="sm:col-span-2 max-w-full"
+          className="sm:col-span-2 w-full"
           label="住所"
           name="applicantAddress"
           value={form.applicantAddress}
@@ -193,7 +193,7 @@ export function OrderSection({
           placeholder="〒123-4567 東京都〇〇区〇〇 1-2-3"
         />
         <LabeledInput
-          className="sm:col-span-2 max-w-full"
+          className="sm:col-span-2 w-full"
           label="メールアドレス*"
           name="applicantEmail"
           value={form.applicantEmail}
@@ -211,7 +211,7 @@ export function OrderSection({
     <fieldset className="grid gap-4 w-full">
       <legend className="text-base font-semibold text-gray-900">ご希望</legend>
       <div className="grid gap-5 sm:grid-cols-3 w-full">
-        <div className="field sm:col-span-2 max-w-full">
+        <div className="field sm:col-span-2 w-full">
           <span className="text-gray-700">カタログ番号*</span>
           <select
             name="catalogId"
@@ -240,11 +240,11 @@ export function OrderSection({
           error={errors.quantity}
           inputMode="numeric"
           min={1}
-          className="max-w-full"
+          className="w-full"
         />
 
         <LabeledInput
-          className="sm:col-span-3 max-w-full"
+          className="sm:col-span-3 w-full"
           label="連絡希望時間（任意）"
           name="preferredTime"
           value={form.preferredTime}
@@ -252,7 +252,7 @@ export function OrderSection({
           placeholder="例：平日 10:00-18:00 など"
         />
 
-        <div className="field sm:col-span-3 max-w-full">
+        <div className="field sm:col-span-3 w-full">
           <span className="text-gray-700">ご要望・備考</span>
           <textarea
             name="message"
@@ -278,7 +278,7 @@ export function OrderSection({
           onChange={(v) => setForm({ ...form, recipientName: v })}
           error={errors.recipientName}
           required
-          className="max-w-full"
+          className="w-full"
         />
         <LabeledInput
           label="お届け先電話番号"
@@ -289,10 +289,10 @@ export function OrderSection({
           error={errors.recipientPhone}
           inputMode="numeric"
           maxLength={11}
-          className="max-w-full"
+          className="w-full"
         />
         <LabeledInput
-          className="sm:col-span-2 max-w-full"
+          className="sm:col-span-2 w-full"
           label="お届け先住所*"
           name="recipientAddress"
           value={form.recipientAddress}
