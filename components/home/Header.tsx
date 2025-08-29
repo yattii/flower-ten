@@ -24,7 +24,7 @@ export function Header() {
         <div className="mx-auto max-w-6xl px-4">
           <div className="h-16 flex items-center justify-between">
             {/* 受け皿（PC）：画像と同サイズにする（70x30） */}
-            <div id="pc-logo-slot" className="flex items-center w-[70px] h-[30px]">
+            <div id="pc-logo-slot" className="flex items-center w-[50px] h-[10px]">
               <a
                 id="pc-logo-img"
                 href="#top"
@@ -33,7 +33,7 @@ export function Header() {
                 }`}
                 aria-hidden={showLogo ? undefined : true}
               >
-                <Image src="/images/hana-logo.png" alt="HANA" width={70} height={30} priority />
+                <Image src="/images/hana-logo.png" alt="HANA" width={50} height={10} priority />
               </a>
             </div>
 
