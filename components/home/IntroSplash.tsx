@@ -26,7 +26,7 @@ export function IntroSplash() {
 
     // 中央ロゴ（size はターゲットに合わせて後から設定）
     const img = document.createElement("img");
-    img.src = "/images/hana-logo.png"; // SVG/PNG どちらでも
+    img.src = "/images/hana-logo.svg"; // SVG/PNG どちらでも
     Object.assign(img.style, {
       position: "absolute",
       left: "50%", top: "50%",

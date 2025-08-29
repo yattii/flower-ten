@@ -36,3 +36,8 @@ export default function Home({ products, categories }: { products: Product[]; ca
     </main>
   );
 }
+
+// git status                    
+// git add .                       
+// git commit -m "Fix something"  
+// git push
