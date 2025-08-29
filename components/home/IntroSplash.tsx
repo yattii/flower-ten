@@ -83,7 +83,7 @@ export function IntroSplash() {
           { opacity: 0, transform: `translate(-50%,-50%) scale(${START_SCALE})` },
           { opacity: 1, transform: `translate(-50%,-50%) scale(${START_SCALE})` },
         ],
-        { duration: 2000, easing: "ease-out", fill: "forwards" }
+        { duration: 1000, easing: "ease-out", fill: "forwards" }
       );
 
       hold.onfinish = () => {

@@ -5,17 +5,15 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
 type Slide = { src: string; alt?: string };
-
-type Props = {
-  images: Slide[];
-  intervalMs?: number; // 自動再生間隔（ms）
-};
+type Props = { images: Slide[]; intervalMs?: number };
 
 export function HeroSlider({ images, intervalMs = 4500 }: Props) {
   const [idx, setIdx] = useState(0);
-  const [dragX, setDragX] = useState(0);       // ドラッグ中の移動量(px)
+  const [dragX, setDragX] = useState(0);
   const [dragging, setDragging] = useState(false);
-  const [isSwiping, setIsSwiping] = useState<boolean | null>(null); // 縦スクロールor横スワイプの判定
+  const [isSwiping, setIsSwiping] = useState<boolean | null>(null);
+  const [hoverCapable, setHoverCapable] = useState(false); // PC判定
+
   const startX = useRef(0);
   const startY = useRef(0);
   const widthRef = useRef(0);
@@ -26,11 +24,23 @@ export function HeroSlider({ images, intervalMs = 4500 }: Props) {
   const next = () => go(idx + 1);
   const prev = () => go(idx - 1);
 
-  // 自動再生（可視状態のみ）
+  // 端末のホバー可否（PC）を判定
+  useEffect(() => {
+    const isHover =
+      typeof window !== "undefined" &&
+      window.matchMedia("(hover: hover)").matches &&
+      window.matchMedia("(pointer: fine)").matches;
+    setHoverCapable(isHover);
+  }, []);
+
+  // 自動再生（可視時のみ）
   useEffect(() => {
     const play = () => {
       stop();
-      timerRef.current = window.setInterval(() => setIdx((v) => (v + 1) % images.length), intervalMs);
+      timerRef.current = window.setInterval(
+        () => setIdx((v) => (v + 1) % images.length),
+        intervalMs
+      );
     };
     const stop = () => {
       if (timerRef.current) {
@@ -47,13 +57,12 @@ export function HeroSlider({ images, intervalMs = 4500 }: Props) {
     };
   }, [images.length, intervalMs]);
 
-  // タッチ開始
-  const onTouchStart = (e: React.TouchEvent) => {
+  // 共通開始（タッチ/マウス）
+  const beginDrag = (clientX: number, clientY: number) => {
     if (!trackRef.current) return;
     widthRef.current = trackRef.current.clientWidth;
-    const t = e.touches[0];
-    startX.current = t.clientX;
-    startY.current = t.clientY;
+    startX.current = clientX;
+    startY.current = clientY;
     setDragging(true);
     setIsSwiping(null);
     setDragX(0);
@@ -63,70 +72,93 @@ export function HeroSlider({ images, intervalMs = 4500 }: Props) {
     }
   };
 
-  // タッチ移動
-  const onTouchMove = (e: React.TouchEvent) => {
+  // 共通移動（タッチ/マウス）
+  const moveDrag = (clientX: number, clientY: number, prevent?: () => void) => {
     if (!dragging) return;
-    const t = e.touches[0];
-    const dx = t.clientX - startX.current;
-    const dy = t.clientY - startY.current;
+    const dx = clientX - startX.current;
+    const dy = clientY - startY.current;
 
-    // まだ判定していないなら、横/縦のどちらかを判定
     if (isSwiping === null) {
       if (Math.abs(dx) > 8 || Math.abs(dy) > 8) {
-        setIsSwiping(Math.abs(dx) > Math.abs(dy)); // 横のほうが大きければスワイプ
+        setIsSwiping(Math.abs(dx) > Math.abs(dy));
       } else {
         return;
       }
     }
-
     if (isSwiping) {
-      // 横スワイプ：ページのスクロールは止める
-      e.preventDefault();
+      prevent?.(); // スクロール抑制（タッチ時）
       setDragX(dx);
     }
   };
 
-  // タッチ終了
-  const onTouchEnd = () => {
+  // 共通終了（タッチ/マウス）
+  const endDrag = () => {
     if (!dragging) return;
     setDragging(false);
-
-    // スワイプ判定：幅の 15% 以上動いたらページング
     const threshold = (widthRef.current || 1) * 0.15;
     if (isSwiping && Math.abs(dragX) > threshold) {
       dragX < 0 ? next() : prev();
     }
     setDragX(0);
     setIsSwiping(null);
-
-    // 再び自動再生を開始
     if (!timerRef.current) {
-      timerRef.current = window.setInterval(() => setIdx((v) => (v + 1) % images.length), intervalMs);
+      timerRef.current = window.setInterval(
+        () => setIdx((v) => (v + 1) % images.length),
+        intervalMs
+      );
     }
   };
 
-  // ドットで直接移動
+  // タッチイベント
+  const onTouchStart = (e: React.TouchEvent) => {
+    const t = e.touches[0];
+    beginDrag(t.clientX, t.clientY);
+  };
+  const onTouchMove = (e: React.TouchEvent) => {
+    const t = e.touches[0];
+    moveDrag(t.clientX, t.clientY, () => e.preventDefault());
+  };
+  const onTouchEnd = () => endDrag();
+
+  // マウスイベント（PC）
+  const onMouseDown = (e: React.MouseEvent) => {
+    beginDrag(e.clientX, e.clientY);
+  };
+  const onMouseMove = (e: React.MouseEvent) => {
+    if (!dragging) return;
+    // マウス時はページスクロール関係ないので prevent 不要
+    moveDrag(e.clientX, e.clientY);
+  };
+  const onMouseUp = () => endDrag();
+  const onMouseLeave = () => endDrag();
+
+  // ドット移動
   const goDot = (i: number) => setIdx(i);
 
-  // トラックの transform 計算
+  // トラック transform
   const offsetPercent = -idx * 100;
-  const dragPercent =
-    widthRef.current > 0 ? (dragX / widthRef.current) * 100 : 0;
+  const dragPercent = widthRef.current > 0 ? (dragX / widthRef.current) * 100 : 0;
 
   return (
     <div className="relative w-full h-full" ref={trackRef}>
-      {/* スライドトラック（横並び） */}
+      {/* スライドトラック */}
       <div
-        className={`absolute inset-0 flex touch-pan-y select-none`}
+        className="absolute inset-0 flex touch-pan-y select-none"
         style={{
           transform: `translate3d(${offsetPercent + dragPercent}%, 0, 0)`,
           transition: dragging ? "none" : "transform 450ms cubic-bezier(.22,.8,.22,1)",
           willChange: "transform",
         }}
+        // タッチ
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
         onTouchCancel={onTouchEnd}
+        // マウス
+        onMouseDown={onMouseDown}
+        onMouseMove={onMouseMove}
+        onMouseUp={onMouseUp}
+        onMouseLeave={onMouseLeave}
       >
         {images.map((img, i) => (
           <div key={i} className="relative w-full h-full shrink-0">
@@ -135,30 +167,46 @@ export function HeroSlider({ images, intervalMs = 4500 }: Props) {
               alt={img.alt ?? ""}
               fill
               sizes="100vw"
-              className="object-cover"
+              className="object-cover select-none pointer-events-none"
               priority={i === 0}
+              draggable={false}
             />
           </div>
         ))}
       </div>
 
-      {/* ドット（SPでタップしやすいサイズ） */}
-<div className="absolute bottom-3 left-0 right-0 flex justify-center gap-2 md:gap-3">
-  {images.map((_, i) => (
-    <button
-      key={i}
-      onClick={() => goDot(i)}
-      onMouseEnter={() => goDot(i)}   // ★追加：ホバーでスライド切り替え
-      aria-label={`スライド${i + 1}`}
-      className={`h-2.5 w-2.5 md:h-3 md:w-3 rounded-full transition
-        ${i === idx ? "bg-gray-900" : "bg-gray-300 hover:bg-gray-400"}`}
-    />
-  ))}
-</div>
+      {/* PC用 透明クリックゾーン（左右ハーフ） */}
+      <div className="hidden md:block absolute inset-0 z-20">
+        <button
+          aria-label="前へ"
+          onClick={prev}
+          className="absolute inset-y-0 left-0 w-1/2 cursor-pointer"
+          style={{ background: "transparent" }}
+        />
+        <button
+          aria-label="次へ"
+          onClick={next}
+          className="absolute inset-y-0 right-0 w-1/2 cursor-pointer"
+          style={{ background: "transparent" }}
+        />
+      </div>
 
+      {/* ドット（SP=タップ / PC=ホバー&クリック） */}
+      <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-2 md:gap-3 z-20">
+        {images.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => goDot(i)}
+            onMouseEnter={hoverCapable ? () => goDot(i) : undefined}
+            aria-label={`スライド${i + 1}`}
+            className={`h-2.5 w-2.5 md:h-3 md:w-3 rounded-full transition
+              ${i === idx ? "bg-white/90" : "bg-white/50 hover:bg-white/90"}`}
+          />
+        ))}
+      </div>
 
-      {/* 左右ボタン（任意：PCで使いやすく） */}
-      <div className="hidden md:flex absolute inset-y-0 left-0 right-0 items-center justify-between px-2">
+      {/* （任意）左右ボタンを残したい場合は z-20 を付けてください
+      <div className="hidden md:flex absolute inset-y-0 left-0 right-0 items-center justify-between px-2 z-20">
         <button
           aria-label="前へ"
           onClick={prev}
@@ -174,6 +222,7 @@ export function HeroSlider({ images, intervalMs = 4500 }: Props) {
           →
         </button>
       </div>
+      */}
     </div>
   );
 }

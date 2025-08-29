@@ -1,3 +1,4 @@
+// lib/types.ts
 export type ImageAsset = { url: string; width: number; height: number };
 
 export type Category = {
@@ -13,8 +14,11 @@ export type CatalogItem = {
   name: string;
   price: number;
   description?: string;
+  description2?: string;
   image?: ImageAsset;
-  categories?: Category[];
+  images?: ImageAsset[];
+  rank?: number;                 // ★ optional
+  categories?: Category[] | Category | null;
 };
 
 export type Product = {
@@ -22,6 +26,9 @@ export type Product = {
   name: string;
   price: number;
   image: string;
+  images?: string[];
   description?: string;
-  categories: Category[];
+  description2?: string;
+  rank?: number;                 // ★ optional
+  categories?: Category[];
 };

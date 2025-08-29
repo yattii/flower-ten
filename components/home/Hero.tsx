@@ -6,7 +6,7 @@ import { HiOutlineChevronDoubleDown } from "react-icons/hi";
 const heroImages = [
   { src: "/images/hero1.png", alt: "季節の花束" },
   { src: "/images/hero2.png", alt: "ショップ外観" },
-  { src: "/images/hero3.png", alt: "アレンジメント" },
+  { src: "/images/hero3.jpg", alt: "アレンジメント" },
 ];
 
 export function Hero() {
@@ -49,7 +49,7 @@ export function Hero() {
               Flower − TEN
             </h1>
             <h2 className="font-serif text-white drop-shadow-md text-xl md:text-2xl font-semibold tracking-tight">
-              想いを花に乗せて
+              想いをお花に乗せて
             </h2>
           </div>
         </div>

@@ -14,7 +14,7 @@ const FAQS: { q: string; a: ReactNode }[] = [
 export function QASection() {
   return (
     <section id="qa" className="mx-auto max-w-6xl px-4 py-14">
-      <h2 className="section-title text-gray-900">よくあるご質問</h2>
+      <h2 className="section-title text-gray-900 pt-11">よくあるご質問</h2>
       <div className="mt-6 grid gap-3">
         {FAQS.map((f, i) => (
           <details key={i} className="group rounded-2xl bg-white/95 ring-1 ring-black/5 shadow-sm open:shadow-md">

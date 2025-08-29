@@ -81,8 +81,8 @@ export function Header() {
   htmlFor="nav-toggle-main"
   aria-label="メニューを開閉"
   className="
-    md:hidden fixed right-4 top-4 z-[60]
-    h-12 w-12 rounded-2xl  backdrop-blur
+    md:hidden fixed right-4 top-5 z-[60]
+    h-17 w-17 rounded-2xl  backdrop-blur
     border border-black/10 shadow-lg
     flex items-center justify-center
     cursor-pointer select-none
@@ -97,10 +97,10 @@ export function Header() {
   "
 >
   {/* ハンバーガー */}
-  <Menu className="icon-burger inline h-[26px] w-[26px]" strokeWidth={2} aria-hidden="true" />
+  <Menu className="icon-burger inline h-[46px] w-[46px]" strokeWidth={2} aria-hidden="true" />
 
   {/* クローズ（初期は非表示） */}
-  <X className="icon-close hidden h-[26px] w-[26px]" strokeWidth={2} aria-hidden="true" />
+  <X className="icon-close hidden h-[46px] w-[46px]" strokeWidth={2} aria-hidden="true" />
 </label>
 
 
