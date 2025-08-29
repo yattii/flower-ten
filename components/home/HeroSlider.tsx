@@ -11,7 +11,7 @@ type Props = {
   intervalMs?: number; // 自動再生間隔（ms）
 };
 
-export function HeroSlider({ images, intervalMs = 3500 }: Props) {
+export function HeroSlider({ images, intervalMs = 4500 }: Props) {
   const [idx, setIdx] = useState(0);
   const [dragX, setDragX] = useState(0);       // ドラッグ中の移動量(px)
   const [dragging, setDragging] = useState(false);
@@ -143,17 +143,19 @@ export function HeroSlider({ images, intervalMs = 3500 }: Props) {
       </div>
 
       {/* ドット（SPでタップしやすいサイズ） */}
-      <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-2 md:gap-3">
-        {images.map((_, i) => (
-          <button
-            key={i}
-            onClick={() => goDot(i)}
-            aria-label={`スライド${i + 1}`}
-            className={`h-2.5 w-2.5 md:h-3 md:w-3 rounded-full transition
-              ${i === idx ? "bg-gray-900" : "bg-gray-300 hover:bg-gray-400"}`}
-          />
-        ))}
-      </div>
+<div className="absolute bottom-3 left-0 right-0 flex justify-center gap-2 md:gap-3">
+  {images.map((_, i) => (
+    <button
+      key={i}
+      onClick={() => goDot(i)}
+      onMouseEnter={() => goDot(i)}   // ★追加：ホバーでスライド切り替え
+      aria-label={`スライド${i + 1}`}
+      className={`h-2.5 w-2.5 md:h-3 md:w-3 rounded-full transition
+        ${i === idx ? "bg-gray-900" : "bg-gray-300 hover:bg-gray-400"}`}
+    />
+  ))}
+</div>
+
 
       {/* 左右ボタン（任意：PCで使いやすく） */}
       <div className="hidden md:flex absolute inset-y-0 left-0 right-0 items-center justify-between px-2">

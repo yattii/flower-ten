@@ -82,7 +82,7 @@ export function Header() {
   aria-label="メニューを開閉"
   className="
     md:hidden fixed right-4 top-4 z-[60]
-    h-12 w-12 rounded-2xl bg-white/40 backdrop-blur
+    h-12 w-12 rounded-2xl  backdrop-blur
     border border-black/10 shadow-lg
     flex items-center justify-center
     cursor-pointer select-none
