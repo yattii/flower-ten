@@ -63,7 +63,7 @@ export function Header() {
     aria-hidden={showLogo ? undefined : true}
     style={{ pointerEvents: showLogo ? "auto" : "none" }}
   >
-    <div className="bg-[#f5f5dc] rounded-4xl px-2 py-1 shadow-sm">
+    <div className="">
       <Image
         src="/images/hana-logo.png"
         alt="HANA"

@@ -156,157 +156,163 @@ export function OrderSection({
       <div className="mx-auto max-w-3xl px-4">
         <h2 className="section-title text-gray-900 pt-11">お申し込み</h2>
 
-        <div className="card mt-6 grid gap-8">
-          <form onSubmit={submit} className="grid gap-8" noValidate>
-            {/* ===== お申込者情報 ===== */}
-            <fieldset className="grid gap-4">
-              <legend className="text-base font-semibold text-gray-900">お申込者情報</legend>
-              <div className="grid gap-5 sm:grid-cols-2">
-                <LabeledInput
-                  label="お名前*"
-                  name="applicantName"
-                  value={form.applicantName}
-                  onChange={(v) => setForm({ ...form, applicantName: v })}
-                  placeholder="山田 太郎"
-                  error={errors.applicantName}
-                  required
-                />
-                <LabeledInput
-                  label="お電話番号*"
-                  name="applicantPhone"
-                  value={form.applicantPhone}
-                  onChange={(v) => setForm({ ...form, applicantPhone: onlyDigits(v) })}
-                  placeholder="09012345678（ハイフンなし）"
-                  error={errors.applicantPhone}
-                  inputMode="numeric"
-                  maxLength={11}
-                  required
-                />
-                <LabeledInput
-                  className="sm:col-span-2"
-                  label="住所"
-                  name="applicantAddress"
-                  value={form.applicantAddress}
-                  onChange={(v) => setForm({ ...form, applicantAddress: v })}
-                  placeholder="〒123-4567 東京都〇〇区〇〇 1-2-3"
-                />
-                <LabeledInput
-                  className="sm:col-span-2"
-                  label="メールアドレス*"
-                  name="applicantEmail"
-                  value={form.applicantEmail}
-                  onChange={(v) => setForm({ ...form, applicantEmail: v })}
-                  placeholder="taro@example.com"
-                  error={errors.applicantEmail}
-                  type="email"
-                  inputMode="email"
-                  required
-                />
-              </div>
-            </fieldset>
+        <div className="card mt-6 grid gap-8 overflow-hidden">
+  <form onSubmit={submit} className="grid gap-8 w-full" noValidate>
+    {/* ===== お申込者情報 ===== */}
+    <fieldset className="grid gap-4 w-full">
+      <legend className="text-base font-semibold text-gray-900">お申込者情報</legend>
+      <div className="grid gap-5 sm:grid-cols-2 w-full">
+        <LabeledInput
+          label="お名前*"
+          name="applicantName"
+          value={form.applicantName}
+          onChange={(v) => setForm({ ...form, applicantName: v })}
+          placeholder="山田 太郎"
+          error={errors.applicantName}
+          required
+          className="max-w-full"
+        />
+        <LabeledInput
+          label="お電話番号*"
+          name="applicantPhone"
+          value={form.applicantPhone}
+          onChange={(v) => setForm({ ...form, applicantPhone: onlyDigits(v) })}
+          placeholder="09012345678（ハイフンなし）"
+          error={errors.applicantPhone}
+          inputMode="numeric"
+          maxLength={11}
+          required
+          className="max-w-full"
+        />
+        <LabeledInput
+          className="sm:col-span-2 max-w-full"
+          label="住所"
+          name="applicantAddress"
+          value={form.applicantAddress}
+          onChange={(v) => setForm({ ...form, applicantAddress: v })}
+          placeholder="〒123-4567 東京都〇〇区〇〇 1-2-3"
+        />
+        <LabeledInput
+          className="sm:col-span-2 max-w-full"
+          label="メールアドレス*"
+          name="applicantEmail"
+          value={form.applicantEmail}
+          onChange={(v) => setForm({ ...form, applicantEmail: v })}
+          placeholder="taro@example.com"
+          error={errors.applicantEmail}
+          type="email"
+          inputMode="email"
+          required
+        />
+      </div>
+    </fieldset>
 
-            {/* ===== ご希望（カタログ番号など） ===== */}
-            <fieldset className="grid gap-4">
-              <legend className="text-base font-semibold text-gray-900">ご希望</legend>
-              <div className="grid gap-5 sm:grid-cols-3">
-                <div className="field sm:col-span-2">
-                  <span className="text-gray-700">カタログ番号*</span>
-                  <select
-                    name="catalogId"
-                    required
-                    value={form.catalogId}
-                    onChange={(e) => setForm({ ...form, catalogId: e.target.value })}
-                    className={`input-lg ${errors.catalogId ? "ring-2 ring-red-400" : ""}`}
-                    aria-invalid={!!errors.catalogId}
-                  >
-                    <option value="" disabled>選択してください</option>
-                    {options.map((p) => (
-                      <option key={p.id} value={p.id}>
-                        {p.id} — {p.name}
-                      </option>
-                    ))}
-                  </select>
-                  {errors.catalogId && <p className="mt-1 text-xs text-red-600">{errors.catalogId}</p>}
-                </div>
-
-                <LabeledInput
-                  label="数量"
-                  name="quantity"
-                  type="number"
-                  value={String(form.quantity)}
-                  onChange={(v) => setForm({ ...form, quantity: Math.max(1, Number(v || 1)) })}
-                  error={errors.quantity}
-                  inputMode="numeric"
-                  min={1}
-                />
-
-                <LabeledInput
-                  className="sm:col-span-3"
-                  label="連絡希望時間（任意）"
-                  name="preferredTime"
-                  value={form.preferredTime}
-                  onChange={(v) => setForm({ ...form, preferredTime: v })}
-                  placeholder="例：平日 10:00-18:00 など"
-                />
-
-                <div className="field sm:col-span-3">
-                  <span className="text-gray-700">ご要望・備考</span>
-                  <textarea
-                    name="message"
-                    value={form.message}
-                    onChange={(e) => setForm({ ...form, message: e.target.value })}
-                    className={`input-lg min-h-[120px] ${errors.message ? "ring-2 ring-red-400" : ""}`}
-                    placeholder="色味・雰囲気、用途、ご予算の目安など"
-                    aria-invalid={!!errors.message}
-                  />
-                  {errors.message && <p className="mt-1 text-xs text-red-600">{errors.message}</p>}
-                </div>
-              </div>
-            </fieldset>
-
-            {/* ===== お届け先情報 ===== */}
-            <fieldset className="grid gap-4">
-              <legend className="text-base font-semibold text-gray-900">お届け先情報</legend>
-              <div className="grid gap-5 sm:grid-cols-2">
-                <LabeledInput
-                  label="お届け先名*"
-                  name="recipientName"
-                  value={form.recipientName}
-                  onChange={(v) => setForm({ ...form, recipientName: v })}
-                  error={errors.recipientName}
-                  required
-                />
-                <LabeledInput
-                  label="お届け先電話番号"
-                  name="recipientPhone"
-                  value={form.recipientPhone}
-                  onChange={(v) => setForm({ ...form, recipientPhone: onlyDigits(v) })}
-                  placeholder="（任意）09012345678"
-                  error={errors.recipientPhone}
-                  inputMode="numeric"
-                  maxLength={11}
-                />
-                <LabeledInput
-                  className="sm:col-span-2"
-                  label="お届け先住所*"
-                  name="recipientAddress"
-                  value={form.recipientAddress}
-                  onChange={(v) => setForm({ ...form, recipientAddress: v })}
-                  error={errors.recipientAddress}
-                  required
-                />
-              </div>
-            </fieldset>
-
-            {/* 送信 */}
-            <div className="pt-2">
-              <button disabled={sending} className="btn-primary">
-                {sending ? "送信中..." : "内容を送信する"}
-              </button>
-              {error && <p className="text-red-600 text-sm mt-2">{error}</p>}
-            </div>
-          </form>
+    {/* ===== ご希望（カタログ番号など） ===== */}
+    <fieldset className="grid gap-4 w-full">
+      <legend className="text-base font-semibold text-gray-900">ご希望</legend>
+      <div className="grid gap-5 sm:grid-cols-3 w-full">
+        <div className="field sm:col-span-2 max-w-full">
+          <span className="text-gray-700">カタログ番号*</span>
+          <select
+            name="catalogId"
+            required
+            value={form.catalogId}
+            onChange={(e) => setForm({ ...form, catalogId: e.target.value })}
+            className={`input-lg w-full ${errors.catalogId ? "ring-2 ring-red-400" : ""}`}
+            aria-invalid={!!errors.catalogId}
+          >
+            <option value="" disabled>選択してください</option>
+            {options.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.id} — {p.name}
+              </option>
+            ))}
+          </select>
+          {errors.catalogId && <p className="mt-1 text-xs text-red-600">{errors.catalogId}</p>}
         </div>
+
+        <LabeledInput
+          label="数量"
+          name="quantity"
+          type="number"
+          value={String(form.quantity)}
+          onChange={(v) => setForm({ ...form, quantity: Math.max(1, Number(v || 1)) })}
+          error={errors.quantity}
+          inputMode="numeric"
+          min={1}
+          className="max-w-full"
+        />
+
+        <LabeledInput
+          className="sm:col-span-3 max-w-full"
+          label="連絡希望時間（任意）"
+          name="preferredTime"
+          value={form.preferredTime}
+          onChange={(v) => setForm({ ...form, preferredTime: v })}
+          placeholder="例：平日 10:00-18:00 など"
+        />
+
+        <div className="field sm:col-span-3 max-w-full">
+          <span className="text-gray-700">ご要望・備考</span>
+          <textarea
+            name="message"
+            value={form.message}
+            onChange={(e) => setForm({ ...form, message: e.target.value })}
+            className={`input-lg w-full min-h-[120px] ${errors.message ? "ring-2 ring-red-400" : ""}`}
+            placeholder="色味・雰囲気、用途、ご予算の目安など"
+            aria-invalid={!!errors.message}
+          />
+          {errors.message && <p className="mt-1 text-xs text-red-600">{errors.message}</p>}
+        </div>
+      </div>
+    </fieldset>
+
+    {/* ===== お届け先情報 ===== */}
+    <fieldset className="grid gap-4 w-full">
+      <legend className="text-base font-semibold text-gray-900">お届け先情報</legend>
+      <div className="grid gap-5 sm:grid-cols-2 w-full">
+        <LabeledInput
+          label="お届け先名*"
+          name="recipientName"
+          value={form.recipientName}
+          onChange={(v) => setForm({ ...form, recipientName: v })}
+          error={errors.recipientName}
+          required
+          className="max-w-full"
+        />
+        <LabeledInput
+          label="お届け先電話番号"
+          name="recipientPhone"
+          value={form.recipientPhone}
+          onChange={(v) => setForm({ ...form, recipientPhone: onlyDigits(v) })}
+          placeholder="（任意）09012345678"
+          error={errors.recipientPhone}
+          inputMode="numeric"
+          maxLength={11}
+          className="max-w-full"
+        />
+        <LabeledInput
+          className="sm:col-span-2 max-w-full"
+          label="お届け先住所*"
+          name="recipientAddress"
+          value={form.recipientAddress}
+          onChange={(v) => setForm({ ...form, recipientAddress: v })}
+          error={errors.recipientAddress}
+          required
+        />
+      </div>
+    </fieldset>
+
+    {/* 送信 */}
+    <div className="pt-2">
+      <button disabled={sending} className="btn-primary w-full sm:w-auto">
+        {sending ? "送信中..." : "内容を送信する"}
+      </button>
+      {error && <p className="text-red-600 text-sm mt-2">{error}</p>}
+    </div>
+  </form>
+</div>
+
       </div>
 
       {/* 送信完了ポップアップ */}
