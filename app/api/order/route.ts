@@ -23,27 +23,27 @@ function assertEnv() {
     "EMAILJS_SERVICE_ID",
     "EMAILJS_TEMPLATE_ID_ADMIN",
     "EMAILJS_TEMPLATE_ID_CONFIRM",
-    "EMAILJS_PRIVATE_KEY",
-    "EMAILJS_PUBLIC_KEY",
+    "EMAILJS_PRIVATE_KEY", // ← Strict mode ではこれが必須
   ];
-  const miss = need.filter(k => !process.env[k]);
+  const miss = need.filter((k) => !process.env[k]);
   if (miss.length) throw new Error("EmailJS env is missing: " + miss.join(", "));
 }
 
 async function sendEmail(template_id: string, params: OrderPayload) {
   const PRIVATE = (process.env.EMAILJS_PRIVATE_KEY || "").trim();
-  const PUBLIC  = (process.env.EMAILJS_PUBLIC_KEY  || "").trim();
+  if (!PRIVATE) throw new Error("EMAILJS_PRIVATE_KEY is empty");
 
-  const headers: Record<string, string> = {
+  const headers = {
     "Content-Type": "application/json",
-    Authorization: `Bearer ${PRIVATE}`,     // ← Private Key（必須）
+    // ✅ Strict mode：Authorization に Private Key を必ず付与
+    Authorization: `Bearer ${PRIVATE}`,
   };
 
+  // ✅ user_id（Public Key）は入れない
   const body = {
     service_id: process.env.EMAILJS_SERVICE_ID,
     template_id,
     template_params: params,
-    user_id: PUBLIC,                         // ← Public Key（必須にする）
   };
 
   const res = await fetch(EMAILJS_URL, {
