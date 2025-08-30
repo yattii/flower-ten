@@ -35,22 +35,22 @@ async function sendEmail(template_id: string, params: OrderPayload) {
 
   const headers = {
     "Content-Type": "application/json",
-    // ✅ Strict mode：Authorization に Private Key を必ず付与
-    Authorization: `Bearer ${PRIVATE}`,
+    Authorization: `Bearer ${(process.env.EMAILJS_PRIVATE_KEY || "").trim()}`, // ← 必須
   };
-
-  // ✅ user_id（Public Key）は入れない
+  
   const body = {
     service_id: process.env.EMAILJS_SERVICE_ID,
     template_id,
     template_params: params,
+    // user_id は不要（Public Keyは使わない）
   };
-
-  const res = await fetch(EMAILJS_URL, {
+  
+  const res = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
     method: "POST",
     headers,
     body: JSON.stringify(body),
   });
+  
 
   if (!res.ok) {
     const txt = await res.text().catch(() => "");
