@@ -63,6 +63,32 @@
   }
 }
 
+/* ====== フォームのはみ出し対策（SP） ====== */
+@layer components {
+  /* grid/flex の子を確実に縮ませる */
+  .field {
+    min-width: 0; /* ← これが超重要 */
+  }
+
+  /* フォーム要素は親幅にフィットさせる */
+  .input-lg,
+  .field select,
+  .field textarea,
+  .field input {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Select / textarea も input-lg と同じ見た目に */
+  .field select,
+  .field textarea {
+    @apply rounded-xl border border-gray-300 bg-white px-4 py-3 text-[16px] text-gray-900 placeholder:text-gray-400 shadow-inner;
+  }
+}
+
+/* grid の子が縮めない問題の保険 */
+.grid > * { min-width: 0; }
 
 
 /* アニメーション・スクロールバー */

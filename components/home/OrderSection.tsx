@@ -156,7 +156,7 @@ export function OrderSection({
       <div className="mx-auto max-w-3xl px-4">
         <h2 className="section-title text-gray-900 pt-11">お申し込み</h2>
 
-        <div className="card mt-6 grid gap-8 w-full overflow-x-hidden pr-20">
+        <div className="card mt-6 grid gap-8 w-full overflow-x-hidden">
   <form onSubmit={submit} className="grid gap-8 w-full" noValidate>
     {/* ===== お申込者情報 ===== */}
     <fieldset className="grid gap-4 w-full">
