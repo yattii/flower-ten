@@ -93,62 +93,56 @@ export function OrderSection({
       return;
     }
 
-    setSending(true);
-    try {
-      // 環境変数
-      const PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!;
-      const SERVICE_ID = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!;
-      const TEMPLATE_ID_ADMIN = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!;            // 管理者宛
-      const TEMPLATE_ID_CONFIRM = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID_CONFIRM!;  // 申込者宛(自動返信)
+    // submit 内だけ差し替え（他はそのまま）
+setSending(true);
+try {
+  const tpl = {
+    applicant_name: form.applicantName,
+    applicant_address: form.applicantAddress,
+    applicant_phone: form.applicantPhone,
+    applicant_email: form.applicantEmail,
+    catalog_id: form.catalogId,
+    catalog_name: products.find((p) => p.id === form.catalogId)?.name ?? "",
+    quantity: String(form.quantity),
+    preferred_time: form.preferredTime,
+    message: form.message,
+    recipient_name: form.recipientName,
+    recipient_address: form.recipientAddress,
+    recipient_phone: form.recipientPhone,
+  };
 
-      emailjs.init(PUBLIC_KEY);
+  const r = await fetch("/api/order", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(tpl),
+  });
 
-      // 共通テンプレート変数
-      const tpl = {
-        applicant_name: form.applicantName,
-        applicant_address: form.applicantAddress,
-        applicant_phone: form.applicantPhone,
-        applicant_email: form.applicantEmail,
-        catalog_id: form.catalogId,
-        catalog_name: products.find((p) => p.id === form.catalogId)?.name ?? "",
-        quantity: String(form.quantity),
-        preferred_time: form.preferredTime,
-        message: form.message,
-        recipient_name: form.recipientName,
-        recipient_address: form.recipientAddress,
-        recipient_phone: form.recipientPhone,
-      };
+  if (!r.ok) {
+    const j = await r.json().catch(() => ({}));
+    throw new Error(j?.detail || j?.error || "送信に失敗しました");
+  }
 
-      // 1) 管理者宛メール（宛先はテンプレート側の固定Toに設定）
-      // 2) 申込者宛メール（テンプレートの「To」に {{applicant_email}} を設定しておく）
-      const [adminRes, userRes] = await Promise.all([
-        emailjs.send(SERVICE_ID, TEMPLATE_ID_ADMIN, tpl),
-        emailjs.send(SERVICE_ID, TEMPLATE_ID_CONFIRM, tpl),
-      ]);
+  // 成功 → クリア＆完了ポップアップ
+  setForm({
+    applicantName: "",
+    applicantAddress: "",
+    applicantPhone: "",
+    applicantEmail: "",
+    catalogId: "",
+    quantity: 1,
+    preferredTime: "",
+    message: "",
+    recipientName: "",
+    recipientAddress: "",
+    recipientPhone: "",
+  });
+  setShowPopup(true);
+} catch (err) {
+  setError(err instanceof Error ? err.message : "送信に失敗しました");
+} finally {
+  setSending(false);
+}
 
-      if (adminRes.status !== 200) throw new Error("管理者通知メールの送信に失敗しました");
-      if (userRes.status !== 200) throw new Error("お客様への受付メール送信に失敗しました");
-
-      // 入力クリア & ポップアップ表示
-      setForm({
-        applicantName: "",
-        applicantAddress: "",
-        applicantPhone: "",
-        applicantEmail: "",
-        catalogId: "",
-        quantity: 1,
-        preferredTime: "",
-        message: "",
-        recipientName: "",
-        recipientAddress: "",
-        recipientPhone: "",
-      });
-      setShowPopup(true);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "送信に失敗しました");
-    } finally {
-      setSending(false);
-    }
   }
 
   return (
