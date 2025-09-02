@@ -1,0 +1,10 @@
+{
+  "service_id": "service_flower-ten",
+  "template_id": "template_nmgs4z4",
+  "user_id": "ptpsxU5ps_X7tBS-Y",
+  "accessToken": "DT399P3xKClt2Q_cbZnoq",
+  "template_params": {
+    "applicant_name": "RESTテスト",
+    "applicant_email": "you@example.com"
+  }
+}

@@ -86,64 +86,63 @@ export function OrderSection({
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
-
+  
     if (!validate()) {
       const first = document.querySelector("[aria-invalid='true']") as HTMLElement | null;
       first?.scrollIntoView({ behavior: "smooth", block: "center" });
       return;
     }
-
-    // submit 内だけ差し替え（他はそのまま）
-setSending(true);
-try {
-  const tpl = {
-    applicant_name: form.applicantName,
-    applicant_address: form.applicantAddress,
-    applicant_phone: form.applicantPhone,
-    applicant_email: form.applicantEmail,
-    catalog_id: form.catalogId,
-    catalog_name: products.find((p) => p.id === form.catalogId)?.name ?? "",
-    quantity: String(form.quantity),
-    preferred_time: form.preferredTime,
-    message: form.message,
-    recipient_name: form.recipientName,
-    recipient_address: form.recipientAddress,
-    recipient_phone: form.recipientPhone,
-  };
-
-  const r = await fetch("/api/order", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(tpl),
-  });
-
-  if (!r.ok) {
-    const j = await r.json().catch(() => ({}));
-    throw new Error(j?.detail || j?.error || "送信に失敗しました");
+  
+    setSending(true);
+    try {
+      const payload = {
+        applicant_name: form.applicantName,
+        applicant_address: form.applicantAddress,
+        applicant_phone: form.applicantPhone,
+        applicant_email: form.applicantEmail,
+        catalog_id: form.catalogId,
+        catalog_name: products.find(p => p.id === form.catalogId)?.name ?? "",
+        quantity: String(form.quantity),
+        preferred_time: form.preferredTime,
+        message: form.message,
+        recipient_name: form.recipientName,
+        recipient_address: form.recipientAddress,
+        recipient_phone: form.recipientPhone || "",
+      };
+  
+      const res = await fetch("/api/order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+  
+      if (!res.ok) {
+        const j = await res.json().catch(() => ({}));
+        throw new Error(j?.detail || "送信に失敗しました");
+      }
+  
+      // 成功：フォームリセット & ポップアップ
+      setForm({
+        applicantName: "",
+        applicantAddress: "",
+        applicantPhone: "",
+        applicantEmail: "",
+        catalogId: "",
+        quantity: 1,
+        preferredTime: "",
+        message: "",
+        recipientName: "",
+        recipientAddress: "",
+        recipientPhone: "",
+      });
+      setShowPopup(true);
+    } catch (err: any) {
+      setError(err?.message || "送信に失敗しました");
+    } finally {
+      setSending(false);
+    }
   }
-
-  // 成功 → クリア＆完了ポップアップ
-  setForm({
-    applicantName: "",
-    applicantAddress: "",
-    applicantPhone: "",
-    applicantEmail: "",
-    catalogId: "",
-    quantity: 1,
-    preferredTime: "",
-    message: "",
-    recipientName: "",
-    recipientAddress: "",
-    recipientPhone: "",
-  });
-  setShowPopup(true);
-} catch (err) {
-  setError(err instanceof Error ? err.message : "送信に失敗しました");
-} finally {
-  setSending(false);
-}
-
-  }
+  
 
   return (
     <section id="order" className="py-16">

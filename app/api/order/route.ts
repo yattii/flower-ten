@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-export const runtime = "nodejs";
 
 const EMAILJS_URL = "https://api.emailjs.com/api/v1.0/email/send";
 
@@ -23,34 +22,28 @@ function assertEnv() {
     "EMAILJS_SERVICE_ID",
     "EMAILJS_TEMPLATE_ID_ADMIN",
     "EMAILJS_TEMPLATE_ID_CONFIRM",
-    "EMAILJS_PRIVATE_KEY", // ← Strict mode ではこれが必須
+    "EMAILJS_PUBLIC_KEY",   // ← user_id に使う（Public）
+    "EMAILJS_PRIVATE_KEY", // ← accessToken に使う（Private）
   ];
-  const miss = need.filter((k) => !process.env[k]);
+  const miss = need.filter(k => !process.env[k]?.trim());
   if (miss.length) throw new Error("EmailJS env is missing: " + miss.join(", "));
 }
 
 async function sendEmail(template_id: string, params: OrderPayload) {
-  const PRIVATE = (process.env.EMAILJS_PRIVATE_KEY || "").trim();
-  if (!PRIVATE) throw new Error("EMAILJS_PRIVATE_KEY is empty");
-
-  const headers = {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${(process.env.EMAILJS_PRIVATE_KEY || "").trim()}`, // ← 必須
-  };
-  
   const body = {
     service_id: process.env.EMAILJS_SERVICE_ID,
     template_id,
+    user_id: process.env.EMAILJS_PUBLIC_KEY,     // ← 必須（Public Key）
+    accessToken: process.env.EMAILJS_PRIVATE_KEY, // ← 必須（Private Key）
     template_params: params,
-    // user_id は不要（Public Keyは使わない）
   };
-  
-  const res = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
+
+  const res = await fetch(EMAILJS_URL, {
     method: "POST",
-    headers,
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
+    // keepalive: true, // ← 送信前にタブ閉じられるケースをケアしたいときだけ
   });
-  
 
   if (!res.ok) {
     const txt = await res.text().catch(() => "");
